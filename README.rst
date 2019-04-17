@@ -43,3 +43,6 @@ Then add it to your middleware after SessionMiddleware::
 
 When ``RESTRICTEDSESSIONS_AUTHED_ONLY`` setting enabled ensure this middleware is added after
 ``AuthenticationMiddleware`` such that the ``request.user`` is present.
+
+Setting ``RESTRICTEDSESSIONS_REDIRECT_VIEW`` to the special value ``self`` will redirect to the current page (after going again through the login if it was a protected one).
+

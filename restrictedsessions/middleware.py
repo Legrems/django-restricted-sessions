@@ -3,7 +3,7 @@ from netaddr import IPNetwork, IPAddress, AddrConversionError, AddrFormatError
 import logging
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 try:
     from django.urls import reverse
 except ModuleNotFoundError:
@@ -50,6 +50,10 @@ class RestrictedSessionsMiddleware(MiddlewareMixin):
             logger.warning("Destroyed session due to invalid change of remote host or user agent")
             redirect_view = getattr(settings, 'RESTRICTEDSESSIONS_REDIRECT_VIEW', None)
             if redirect_view:
+                
+                if redirect_view == 'self':
+                    return HttpResponseRedirect(request.get_full_path())
+                
                 return redirect(reverse(redirect_view))
             else:
                 status = getattr(settings, 'RESTRICTEDSESSIONS_FAILURE_STATUS', 400)

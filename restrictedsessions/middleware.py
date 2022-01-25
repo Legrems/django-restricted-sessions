@@ -6,7 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.urls import reverse
 from django.shortcuts import redirect
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 try:
     from django.utils.deprecation import MiddlewareMixin
@@ -57,7 +57,7 @@ class RestrictedSessionsMiddleware(MiddlewareMixin):
         # Set the UA/IP Address on the session since they validated correctly
         request.session[SESSION_IP_KEY] = remote_addr
         if request.META.get('HTTP_USER_AGENT'):
-            request.session[SESSION_UA_KEY] = force_text(request.META['HTTP_USER_AGENT'], errors='replace')
+            request.session[SESSION_UA_KEY] = force_str(request.META['HTTP_USER_AGENT'], errors='replace')
 
     def validate_ip(self, request, remote_ip):
         # When we aren't configured to restrict on IP address
@@ -97,4 +97,4 @@ class RestrictedSessionsMiddleware(MiddlewareMixin):
         if SESSION_UA_KEY not in request.session:
             return True
         # Compare the new user agent value with what is known about the session
-        return request.session[SESSION_UA_KEY] == force_text(request.META['HTTP_USER_AGENT'], errors='replace')
+        return request.session[SESSION_UA_KEY] == force_str(request.META['HTTP_USER_AGENT'], errors='replace')

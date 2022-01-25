@@ -4,10 +4,7 @@ import logging
 
 from django.conf import settings
 from django.http import HttpResponse
-try:
-    from django.urls import reverse
-except ModuleNotFoundError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 
@@ -33,12 +30,14 @@ class RestrictedSessionsMiddleware(MiddlewareMixin):
         if getattr(settings, 'RESTRICTEDSESSIONS_AUTHED_ONLY', False):
             user = getattr(request, 'user', None)
             # No logged in user -- ignore checks
-            if not user or not hasattr(user, 'is_authenticated') or not user.is_authenticated():
+            if not user or not hasattr(user, 'is_authenticated') or not user.is_authenticated:
                 return
 
         # Extract remote IP address for validation purposes
         remote_addr_key = getattr(settings, 'RESTRICTEDSESSIONS_REMOTE_ADDR_KEY', 'REMOTE_ADDR')
         remote_addr = request.META.get(remote_addr_key)
+        if remote_addr:
+            remote_addr = remote_addr.split(',')[0]
 
         # Clear the session and handle response when request doesn't validate
         if not self.validate_ip(request, remote_addr) or not self.validate_ua(request):

@@ -1,1 +1,1 @@
-__version__ = '0.3.0.arcanite'
+__version__ = '0.3.0.post0'
